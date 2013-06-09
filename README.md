@@ -18,15 +18,27 @@ Or install it yourself as:
 
     $ gem install collective
 
-## Usage
+## How it works/Usage
 
-This gem is stuctured according to my own personal interpretation of some kind of approximate conflation of Uncle Bobs EBI architecture and Hexagonal architecture. User actions are organised into use cases and these are the meat of the application business logic. They accept an adapter which implements Collective::RequestAdapter and return a response which responds to persist and respond. The result of persist and respond provide objects which are responsible for driving some kind of persistance adapter responding to Collective::PersistanceAdapter and some kind of response adapter responding to Collective::ResponseAdapter.
+This gem is stuctured according to my own personal interpretation of some kind of approximate conflation of Uncle Bobs EBI architecture and Hexagonal architecture with a reliance on the library used in the Guru Watch example application at git://github.com/qertoip/guru_watch.git. User actions are organised into use cases and these are the meat of the application business logic. They accept a request (an openstruct) or hash, implement the abstract UseCase class (found in the Guru Watch library) and return a response. When use cases are called you must ensure a back end has been configured which implements the RubyPersistanceApi::Abstract::Backend found in Guru Watch. These can be configured app wide or on a per use case call basis.
 
 This might work with Rails in the following controller action.
 
 BoxController < ActionController::Base
 
-"The EBI side has the logic: what stuff needs what kind of security and when and how. The Rails knows nothing about this, it request what to do from the EBI side and or the EBI side request the Rails side to act."
+  def create_box
+    @box = Collective::UseCases::CreateBox.new(params[:box], optional_db_implementing_adapter).exec
+    @box.ok? 
+      redirect_to(boxes_path)
+    else
+      flash[:errors] = @box.errors
+      render(:new)
+    end
+  end
+
+end
+
+The intention is to ensure that, as long as all these abstract classes/adapters are implemented the business logic never need worry about what is driving it and how it is persisting things.
 
 ## Contributing
 
