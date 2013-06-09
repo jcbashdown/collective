@@ -1,0 +1,21 @@
+development:
+  adapter: postgresql
+  encoding: unicode
+  database: guru_watch_development
+  pool: 5
+  username: qertoip
+  password: test123
+  host: localhost
+  port: 5432
+  min_messages: WARNING     # don't show NOTICEs
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  database: guru_watch_test
+  pool: 5
+  username: qertoip
+  password: test123
+  host: localhost
+  port: 5432
+  min_messages: WARNING     # don't show NOTICEs
